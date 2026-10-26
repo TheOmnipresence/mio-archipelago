@@ -1,8 +1,9 @@
 ﻿using MioGame;
+using MioGame.Shader;
 using MioModdingApi;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MioAP
@@ -437,6 +438,8 @@ namespace MioAP
 
             // Per-frame pump for queued Archipelago work.
             On.MioGame.On_Game.fixed_update.Prefix += fixed_update_Prefix;
+            On.MioGame.On_Game.fixed_update.Suffix += Cheese;
+            //On.MioGame.GlobalFunctions.game.On_renderer.render_tentacle_2.Prefix += (uint idx, Mio.Tentacle* t, Vec_float_3 chain_u, Vec_float_3 chain_v, Array_Vec_float_3* chain, Array_Shader__Tentacle_vertex* vertices, Array_unsigned_int* indices, Tentacle_consts* consts) => PrintVector(ref Unsafe.AsRef<MioGame.Shader.Tentacle_consts>(consts).tint);
 
             // Item and location interception.
             On.MioGame.On_Game.loot_1.Hook += loot_1_Hook;
@@ -1632,6 +1635,11 @@ namespace MioAP
             ref var mio = ref __this->mio;
             ref var save = ref __this->save;
 
+            //LogMessage("x: " + mio.tentacles.color_override.x.ToString());
+            //LogMessage("y: " + mio.tentacles.color_override.y.ToString());
+            //LogMessage("z: " + mio.tentacles.color_override.z.ToString());
+            //LogMessage("w: " + mio.tentacles.color_override.w.ToString());
+
             if (mio.cutscene.active) return;
             if (!finishedIntro)
             {
@@ -1763,6 +1771,41 @@ namespace MioAP
             {
                 LogMessage($"Bumper activated with strength {bumper.strength} and range {bumper.range}");
             }
+        }
+
+        private unsafe void Cheese(Game* __this)
+        {
+            ref var mio = ref __this->mio;
+            //ref var override
+            mio.tentacles.color_override.x = 31f;
+            //MioGame.Mio_override.
+            //MioGame.Mio_params.
+            fixed (Mio* mioPtr = &mio)
+            {
+                MioGame.GlobalFunctions.game.mio.mio_head_color(mioPtr);
+            }
+            //mio.tentacles.tentacles[0].
+            //On.MioGame.GlobalFunctions.game.On_renderer.render_tentacle_2.Prefix += 
+            //MioGame.Shader.Tentacle_consts.tint
+            //MioGame.Bind_point.tentacle_consts.
+            //MioGame.Shader.Frame_constants
+            //On.MioGame.GlobalFunctions.game.On_renderer.mio_hair_outline_color.
+
+            //new Vec_float_4().Base
+        }
+
+
+        private void PrintVector(ref Vec_float_3 vec)
+        {
+            //LogMessage("x: " + vec.x.ToString());
+            //LogMessage("y: " + vec.y.ToString());
+            //LogMessage("z: " + vec.z.ToString());
+
+            vec.x = 0;
+            vec.y = 255;
+            vec.z = 0;
+
+            //LogMessage("x: " + vec.x.ToString());
         }
     }
 }

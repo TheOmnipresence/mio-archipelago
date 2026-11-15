@@ -310,6 +310,11 @@ namespace MioAP
             //         kvp.Key, kvp.Value));
             // }
             // LogMessage("==== Trinket Costs End ====");
+
+            if (GetSlotDataValue("randomize_starting_items", false))
+            {
+                HooksManager.QueueRemoveSlash = true;
+            }
 #pragma warning restore CS8602 // Deference of a possibly null reference.
         }
 

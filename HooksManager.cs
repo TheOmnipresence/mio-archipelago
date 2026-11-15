@@ -1771,6 +1771,8 @@ namespace MioAP
         private bool satAtCheckpoint = false;
         private bool finishedIntro = false;
 
+        public static bool QueueRemoveSlash = false;
+
         /// <summary>
         /// Whether the last frame was in-game, so a save load can be spotted.
         /// The run-state flags below are per-run, but HooksManager is built once
@@ -1890,6 +1892,19 @@ namespace MioAP
                         mio.move_to(apManager.startingPosition);
                     }
                 }
+            }
+
+            if (QueueRemoveSlash)
+            {
+                try
+                {
+                    MioGame.String mioString = Util.StringToMioString("UNLOCK:SLASH");
+                    MioGame.Save_entry entry = new(); //Unsafe.AsRef<Hashmap_String_Save_entry.Slot>(save.entries.lookup(&mioString, false)).value;
+                    save.entries.try_remove(&mioString, &entry);
+                    //save.entries.
+                    //Unsafe.AsRef<Hashmap_String_Save_entry.Slot>(save.entries.lookup(&mioString, false)).value.count = 0;
+                }
+                catch (Exception ex) { LogMessage("[AP] Could not remove slash: " + ex); }
             }
 
             if (apManager.isDeathLink)
